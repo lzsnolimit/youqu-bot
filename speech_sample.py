@@ -11,6 +11,7 @@ import time
 import wave
 
 import config
+from common import log
 from config import azure_conf,get_resources_folder
 
 try:
@@ -43,6 +44,8 @@ def speech_recognize_once_from_mic():
     speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
     # Creates a speech recognizer using microphone as audio input.
     # The default language is "en-us".
+
+    speech_config.speech_recognition_language = azure_conf("azure_speaker_identification_lang")
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 
     # Starts speech recognition, and returns after a single utterance is recognized. The end of a
@@ -55,7 +58,8 @@ def speech_recognize_once_from_mic():
 
     # Check the result
     if result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        print("Recognized: {}".format(result.text))
+        log.info("Recognized: {}".format(result.text))
+        return result.text
     elif result.reason == speechsdk.ResultReason.NoMatch:
         print("No speech could be recognized")
     elif result.reason == speechsdk.ResultReason.Canceled:
@@ -564,12 +568,10 @@ def speech_recognize_keyword_locally_from_microphone():
 
     # Read result audio (incl. the keyword).
     if result.reason == speechsdk.ResultReason.RecognizedKeyword:
-        time.sleep(2) # give some time so the stream is filled
-        result_stream = speechsdk.AudioDataStream(result)
-        result_stream.detach_input() # stop any more data from input getting to the stream
-        print('Saving file...')
-        saved = result_stream.save_to_wav_file("AudioFromRecognizedKeyword.wav")
-
+        log.info("Start recognizing the speech that follows the keyword...")
+        query = speech_recognize_once_from_mic()
+        log.info("Recognized: {}".format(query))
+        return query
     # If active keyword recognition needs to be stopped before results, it can be done with
     #
     #   stop_future = keyword_recognizer.stop_recognition_async()

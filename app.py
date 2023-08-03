@@ -1,13 +1,14 @@
 from common import log
 import config
-from speech_sample import speech_recognize_keyword_locally_from_microphone, speech_recognize_async_from_file
+from speech_sample import speech_recognize_keyword_locally_from_microphone, speech_recognize_async_from_file, \
+    speech_recognize_once_from_mic
 
 if __name__ == '__main__':
     try:
         # load config
         config.load_config()
-        speech_recognize_keyword_locally_from_microphone()
-        speech_recognize_async_from_file("AudioFromRecognizedKeyword.wav")
+        query=speech_recognize_keyword_locally_from_microphone()
+
     except Exception as e:
         log.error("App startup failed!")
         log.exception(e)
