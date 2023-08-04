@@ -43,3 +43,7 @@ def conf():
 
 def azure_conf(key):
     return config.get(const.AZURE).get(key)
+
+
+def socket_conf(key):
+    return config.get(const.SOCKET).get(key)
