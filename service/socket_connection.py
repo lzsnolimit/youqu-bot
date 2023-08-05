@@ -1,5 +1,6 @@
 import asyncio
 import json
+import threading
 import time
 import uuid
 
@@ -8,6 +9,7 @@ import subprocess
 
 from common import log
 from config import socket_conf
+from service.azure_model import AZURE
 from service.tss import edge_tss
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5, reconnection_delay=5, reconnection_delay_max=60,
@@ -71,9 +73,15 @@ def on_message(data):
     # content: messageContent.content,
     # conversationId: messageContent.conversation_id,
     content = data['content']
-    #sio.start_background_task(edge_tss(content))
-    asyncio.run(edge_tss(content))
-    #sio.start_background_task(edge_tss, content)
+    log.info("content:{}", content)
+    if content is None:
+        log.info("content is None")
+        return False
+    #asyncio.create_task(edge_tss(content))
+    #edge_tss(content)
+    audio_data = AZURE().synthesize_speech(content).audio_data
+
+#sio.start_background_task(edge_tss, content)
 
 
 @sio.on('heartbeat', namespace='/chat')
