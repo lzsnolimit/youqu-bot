@@ -1,5 +1,4 @@
 azure-cognitiveservices-speech
-edge_tts
 python-socketio
 requests
 websocket-client
