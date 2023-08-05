@@ -9,8 +9,7 @@ import subprocess
 
 from common import log
 from config import socket_conf
-from service.azure_model import AZURE
-from service.tss import edge_tss
+from service.azure_tts_service import AZURE
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5, reconnection_delay=5, reconnection_delay_max=60,
                       request_timeout=1000)
@@ -67,21 +66,13 @@ def run_in_event_loop(coroutine):
 @sio.on('final', namespace='/chat')
 def on_message(data):
     log.info('I received a message!{}', data)
-
-    #            type: messageContent.response_type,
-    # messageID: messageContent.messageID,
-    # content: messageContent.content,
-    # conversationId: messageContent.conversation_id,
     content = data['content']
     log.info("content:{}", content)
     if content is None:
         log.info("content is None")
         return False
-    #asyncio.create_task(edge_tss(content))
-    #edge_tss(content)
-    audio_data = AZURE().synthesize_speech(content).audio_data
+    AZURE().synthesize_speech(content)
 
-#sio.start_background_task(edge_tss, content)
 
 
 @sio.on('heartbeat', namespace='/chat')

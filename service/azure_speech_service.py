@@ -12,10 +12,12 @@ import wave
 
 import config
 from common import log
-from config import azure_conf,get_resources_folder
+from config import azure_conf, get_resources_folder
+from service.socket_connection import send_message
 
 try:
     import azure.cognitiveservices.speech as speechsdk
+
     config.load_config()
 except ImportError:
     print("""
@@ -25,8 +27,8 @@ except ImportError:
     installation instructions.
     """)
     import sys
-    sys.exit(1)
 
+    sys.exit(1)
 
 # Set up the subscription info for the Speech Service:
 # Replace with your own subscription key and service region (e.g., "westus").
@@ -102,6 +104,7 @@ def speech_recognize_once_from_file():
 
 def speech_recognize_once_compressed_input():
     """performs one-shot speech recognition with compressed input from an audio file"""
+
     # <SpeechRecognitionWithCompressedFile>
     class BinaryFileReaderCallback(speechsdk.audio.PullAudioInputStreamCallback):
         def __init__(self, filename: str):
@@ -127,8 +130,10 @@ def speech_recognize_once_compressed_input():
             except Exception as ex:
                 print('Exception in `close`: {}'.format(ex))
                 raise
+
     # Creates an audio stream format. For an example we are using MP3 compressed file here
-    compressed_format = speechsdk.audio.AudioStreamFormat(compressed_stream_format=speechsdk.AudioStreamContainerFormat.MP3)
+    compressed_format = speechsdk.audio.AudioStreamFormat(
+        compressed_stream_format=speechsdk.AudioStreamContainerFormat.MP3)
     callback = BinaryFileReaderCallback(filename=weatherfilenamemp3)
     stream = speechsdk.audio.PullAudioInputStream(stream_format=compressed_format, pull_stream_callback=callback)
 
@@ -232,7 +237,7 @@ def speech_recognize_once_from_file_with_custom_endpoint_parameters():
 def speech_recognize_async_from_file(filename):
     """performs one-shot speech recognition asynchronously with input from an audio file"""
     speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
-    speech_config.speech_recognition_language=azure_conf("azure_speaker_identification_lang")
+    speech_config.speech_recognition_language = azure_conf("azure_speaker_identification_lang")
     audio_config = speechsdk.audio.AudioConfig(filename=filename)
     # Creates a speech recognizer using a file as audio input.
     # The default language is "en-us".
@@ -297,6 +302,7 @@ def speech_recognize_continuous_from_file():
     speech_recognizer.stop_continuous_recognition()
     # </SpeechContinuousRecognitionWithFile>
 
+
 def speech_recognize_keyword_from_microphone():
     """performs keyword-triggered speech recognition with input microphone"""
     speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
@@ -352,12 +358,15 @@ def speech_recognize_keyword_from_microphone():
 
     speech_recognizer.stop_keyword_recognition()
 
+
 def speech_recognition_with_pull_stream():
     """gives an example how to use a pull audio stream to recognize speech from a custom audio
     source"""
+
     class WavFileReaderCallback(speechsdk.audio.PullAudioInputStreamCallback):
         """Example class that implements the Pull Audio Stream interface to recognize speech from
         an audio file"""
+
         def __init__(self, filename: str):
             super().__init__()
             self._file_h = wave.open(filename, mode=None)
@@ -451,7 +460,7 @@ def speech_recognition_with_push_stream():
 
     # start pushing data until all data has been read from the file
     try:
-        while(True):
+        while (True):
             frames = wav_fh.readframes(n_bytes // 2)
             print('read {} bytes'.format(len(frames)))
             if not frames:
@@ -464,6 +473,7 @@ def speech_recognition_with_push_stream():
         wav_fh.close()
         stream.close()
         speech_recognizer.stop_continuous_recognition()
+
 
 def speech_recognize_once_with_auto_language_detection_from_mic():
     """performs one-shot speech recognition from the default microphone with auto language detection"""
@@ -487,6 +497,7 @@ def speech_recognize_once_with_auto_language_detection_from_mic():
         print("Speech Recognition canceled: {}".format(cancellation_details.reason))
         if cancellation_details.reason == speechsdk.CancellationReason.Error:
             print("Error details: {}".format(cancellation_details.error_details))
+
 
 def speech_recognize_with_auto_language_detection_UsingCustomizedModel():
     """performs speech recognition from the audio file with auto language detection, using customized model"""
@@ -529,7 +540,8 @@ def speech_recognize_keyword_locally_from_microphone():
 
     # Creates an instance of a keyword recognition model. Update this to
     # point to the location of your keyword recognition model.
-    model = speechsdk.KeywordRecognitionModel("{}{}.table".format(get_resources_folder(), azure_conf("azure_speaker_identification_key_word_model")))
+    model = speechsdk.KeywordRecognitionModel(
+        "{}{}.table".format(get_resources_folder(), azure_conf("azure_speaker_identification_key_word_model")))
 
     # The phrase your keyword recognition model triggers on.
     keyword = azure_conf("azure_speaker_identification_key_word")
@@ -570,8 +582,8 @@ def speech_recognize_keyword_locally_from_microphone():
     if result.reason == speechsdk.ResultReason.RecognizedKeyword:
         log.info("Start recognizing the speech that follows the keyword...")
         query = speech_recognize_once_from_mic()
-        log.info("Recognized: {}".format(query))
-        return query
+        log.info("query:{}", query)
+        send_message(query)
     # If active keyword recognition needs to be stopped before results, it can be done with
     #
     #   stop_future = keyword_recognizer.stop_recognition_async()

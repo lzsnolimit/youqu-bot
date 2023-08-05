@@ -20,6 +20,8 @@ class AZURE:
         self.styledegree = azure_conf('styledegree')
         self.xml_lang = azure_conf('azure_speaker_identification_lang')
         self.voice_name = azure_conf('voice_name')
+        self.rate = azure_conf('rate')
+        self.frequency = azure_conf('frequency')
         speech_config = speechsdk.SpeechConfig(subscription=self.speech_key, region=self.service_region)
         self.speech_synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
 
@@ -31,7 +33,7 @@ class AZURE:
                    xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="{self.xml_lang}">
                 <voice name="{self.voice_name}">
                     <mstts:express-as style="{self.style}" styledegree="{self.styledegree}">
-                        <mstts:prosody rate="-5.00%" rate-as="48kHz">
+                        <mstts:prosody rate="{self.rate}" rate-as="{self.frequency}">
                             {text}
                         </mstts:prosody>
                     </mstts:express-as>
