@@ -45,9 +45,9 @@ class AZURE:
 
         # 保存音频流为 WAV 格式文件
         # timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        # filename = "{}_{}_{}.wav".format("output", text[:10], timestamp)
-        # with open(filename, "wb") as f:
-        #     f.write(speech_synthesis_result.audio_data)
+        filename = "{}.wav".format("tmp/ai")
+        with open(filename, "wb") as f:
+            f.write(speech_synthesis_result.audio_data)
         return speech_synthesis_result
 
 

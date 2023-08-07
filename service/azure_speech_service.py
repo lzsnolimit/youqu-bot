@@ -10,6 +10,9 @@ Speech recognition samples for the Microsoft Cognitive Services Speech SDK
 import time
 import wave
 
+from pydub import AudioSegment
+from pydub.playback import play
+
 import config
 from common import log
 from config import azure_conf, get_resources_folder
@@ -38,6 +41,7 @@ speech_key, service_region = azure_conf("azure_key"), azure_conf("azure_region")
 # kHz).
 weatherfilename = "whatstheweatherlike.wav"
 weatherfilenamemp3 = "whatstheweatherlike.mp3"
+audio = AudioSegment.from_wav(azure_conf("start_voice"))
 
 
 def speech_recognize_once_from_mic():
@@ -581,6 +585,8 @@ def speech_recognize_keyword_locally_from_microphone():
     # Read result audio (incl. the keyword).
     if result.reason == speechsdk.ResultReason.RecognizedKeyword:
         log.info("Start recognizing the speech that follows the keyword...")
+        #play a wav file
+        play(audio)
         query = speech_recognize_once_from_mic()
         log.info("query:{}", query)
         send_message(query)
