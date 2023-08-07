@@ -9,7 +9,11 @@ if __name__ == '__main__':
         config.load_config()
         init_sio()
 
-        query=speech_recognize_keyword_locally_from_microphone()
+        while True:
+            log.info("start to listen")
+            query = speech_recognize_keyword_locally_from_microphone()
+
+
 
 
     # asyncio.run(edge_tss(query))
