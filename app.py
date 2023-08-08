@@ -8,8 +8,6 @@ if __name__ == '__main__':
     try:
         # load config
         config.load_config()
-        init_sio()
-
         while True:
             log.info("start to listen")
             speech_recognize_keyword_locally_from_microphone()
