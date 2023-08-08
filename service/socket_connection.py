@@ -1,11 +1,9 @@
 import asyncio
-import json
-import threading
+import subprocess
 import time
 import uuid
 
 import socketio
-import subprocess
 
 from common import log
 from config import socket_conf
