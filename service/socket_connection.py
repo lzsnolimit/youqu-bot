@@ -9,6 +9,7 @@ from common import log
 from config import socket_conf
 from service.azure_tts_service import AZURE
 
+
 sio = socketio.Client(reconnection=True, reconnection_attempts=5, reconnection_delay=5, reconnection_delay_max=60,
                       request_timeout=1000)
 
@@ -18,7 +19,7 @@ def init_sio():
     if not sio.connected:
         path = '{}?token={}'.format(socket_conf('wsurl'), socket_conf('token'))
         log.info(path)
-        sio.connect(path, transports='websocket', namespaces=['/chat'])
+        sio.connect(path, transports=['websocket'], namespaces=['/chat'])
         log.info("sio connected")
     else:
         log.info("sio already connected")
