@@ -3,7 +3,7 @@
 import json
 import os
 
-from common import const
+from common import const, log
 
 config = {}
 
@@ -18,8 +18,8 @@ def load_config():
     config_str = read_file(config_path)
     # 将json字符串反序列化为dict类型
     config = json.loads(config_str)
-    print("载入环节")
-    print(config)
+    log.info("载入环节")
+    log.info(config)
     return config
 
 

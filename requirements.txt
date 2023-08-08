@@ -1,5 +1,5 @@
 azure-cognitiveservices-speech
 python-socketio
-requests
-websocket-client
 pydub
+websocket-client
+requests

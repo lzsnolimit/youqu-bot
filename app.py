@@ -1,7 +1,8 @@
-from common import log
 import config
+from common import log
 from service.azure_speech_service import speech_recognize_keyword_locally_from_microphone
-from service.socket_connection import init_sio, send_message
+
+from service.socket_connection import init_sio
 
 if __name__ == '__main__':
     try:
@@ -11,12 +12,12 @@ if __name__ == '__main__':
 
         while True:
             log.info("start to listen")
-            query = speech_recognize_keyword_locally_from_microphone()
+            speech_recognize_keyword_locally_from_microphone()
 
 
 
 
-    # asyncio.run(edge_tss(query))
+# asyncio.run(edge_tss(query))
     except Exception as e:
         log.error("App startup failed!")
         log.exception(e)

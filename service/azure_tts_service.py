@@ -1,6 +1,6 @@
-import azure.cognitiveservices.speech as speechsdk
-from common import const
 import os
+
+import azure.cognitiveservices.speech as speechsdk
 
 from config import azure_conf
 

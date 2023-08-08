@@ -1,15 +1,14 @@
 import asyncio
-import json
-import threading
+import subprocess
 import time
 import uuid
 
 import socketio
-import subprocess
 
 from common import log
 from config import socket_conf
 from service.azure_tts_service import AZURE
+
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5, reconnection_delay=5, reconnection_delay_max=60,
                       request_timeout=1000)
