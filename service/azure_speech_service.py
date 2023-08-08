@@ -16,7 +16,8 @@ from pydub.playback import play
 import config
 from common import log
 from config import azure_conf, get_resources_folder
-from service.socket_connection import send_message
+from service.azure_tts_service import AZURE
+from service.rest import send_message
 
 try:
     import azure.cognitiveservices.speech as speechsdk
@@ -589,7 +590,11 @@ def speech_recognize_keyword_locally_from_microphone():
         play(audio)
         query = speech_recognize_once_from_mic()
         log.info("query:{}", query)
-        send_message(query)
+        if query:
+            response=send_message(query)
+            if response:
+                log.info("response:{}",response)
+                AZURE().synthesize_speech(response)
     # If active keyword recognition needs to be stopped before results, it can be done with
     #
     #   stop_future = keyword_recognizer.stop_recognition_async()
