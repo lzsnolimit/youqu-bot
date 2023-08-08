@@ -19,7 +19,7 @@ def init_sio():
     if not sio.connected:
         path = '{}?token={}'.format(socket_conf('wsurl'), socket_conf('token'))
         log.info(path)
-        sio.connect(path, transports='websocket', namespaces=['/chat'])
+        sio.connect(path, namespaces=['/chat'])
         log.info("sio connected")
     else:
         log.info("sio already connected")
