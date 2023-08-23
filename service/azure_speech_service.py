@@ -6,10 +6,12 @@
 """
 Speech recognition samples for the Microsoft Cognitive Services Speech SDK
 """
-
+import asyncio
+import tempfile
 import time
 import wave
 
+import edge_tts
 from pydub import AudioSegment
 from pydub.playback import play
 
@@ -18,6 +20,7 @@ from common import log
 from config import azure_conf, get_resources_folder
 from service.azure_tts_service import AZURE
 from service.rest import send_message
+from service.temp_file import temp_dir
 
 try:
     import azure.cognitiveservices.speech as speechsdk
@@ -594,12 +597,21 @@ def speech_recognize_keyword_locally_from_microphone():
             response=send_message(query)
             if response:
                 log.info("response:{}",response)
-                AZURE().synthesize_speech(response)
+                asyncio.run(tts(response))
+                #AZURE().synthesize_speech(response)
     # If active keyword recognition needs to be stopped before results, it can be done with
     #
     #   stop_future = keyword_recognizer.stop_recognition_async()
     #   print('Stopping...')
     #   stopped = stop_future.get()
+
+async def tts(text):
+    tts = edge_tts.Communicate(text=text, voice="zh-CN-YunxiNeural")
+    temp_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_dir, suffix=".mp3")
+    await tts.save(temp_file.name)
+
+    # 播放mp3文件
+    play(AudioSegment.from_mp3(temp_file.name))
 
 
 def pronunciation_assessment_from_microphone():

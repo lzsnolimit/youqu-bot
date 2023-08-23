@@ -18,7 +18,11 @@ def send_message(message):
     })
     start_time = time.time()  # 记录结束时间
     response = requests.request("POST", url, headers=headers, data=payload)
-    content = response.json().get("content")
+    try:
+        content = response.json().get("content")
+    except Exception as e:
+        log.error("response content is not json")
+        content = "发生错误了"
     end_time = time.time()  # 记录结束时间
     execution_time = end_time - start_time  # 计算执行时间
     log.info("[Execution Time] {:.4f} seconds", execution_time)  # 打印执行时间
